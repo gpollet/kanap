@@ -15,8 +15,7 @@ function createProductsCards() {
       return response.json()
     })
     .then((productList) => {
-      let i = 0;
-      while (i !== productList.length) {
+      productList.forEach(product => {
         const productLink = createTag('a');
         const articleTag = createTag('article');
         const productImage = createTag('img');
@@ -25,15 +24,14 @@ function createProductsCards() {
         productLink.appendChild(articleTag);
         articleTag.append(productImage, productName, productDescription);
         itemsSection.appendChild(productLink);
-        productLink.href = `./product.html?id=${productList[i]._id}`
-        productImage.src = `${productList[i].imageUrl}`
-        productImage.alt = `${productList[i].altTxt}`
+        productLink.href = `./product.html?id=${product._id}`
+        productImage.src = `${product.imageUrl}`
+        productImage.alt = `${product.altTxt}`
         productName.classList.add("productName")
-        productName.textContent = `${productList[i].name}`
+        productName.textContent = `${product.name}`
         productDescription.classList.add("productDescription")
-        productDescription.textContent = `${productList[i].description}`
-        i++
-      }
+        productDescription.textContent = `${product.description}`
+      })
     })
     .catch((err) => {
       console.log(`There was an error somewhere!`)
