@@ -1,8 +1,10 @@
 'use strict';
 
+
+
 const currentPageUrl = window.location.href;
 const url = new URL(currentPageUrl);
-const pageProductParam = url.searchParams.get("id");
+const productId = url.searchParams.get("id");
 
 function createTag(newTagName) {
   return document.createElement(newTagName);
@@ -15,7 +17,7 @@ function fillProductsPages() {
     })
     .then((productList) => {
       let i = 0;
-      while (productList[i]._id !== pageProductParam) {
+      while (productList[i]._id !== productId) {
         i++
       }
       const productImage = createTag('img');
@@ -44,92 +46,83 @@ fillProductsPages()
 // Gestion du panier
 // Event listener clic sur "ajouter au panier"
 // Soit ajoute nouvel élément à l'array, soit incrémente si même ID et couleur
-// Panier = un array qui contient : ID produit, quantité produit, couleur produit
-// Utiliser localStorage
+
+
+// Crée un array dans le panier contenant la couleur du produit, son ID et sa quantité. Si un array ayant l'ID et la couleur du produit à ajouter au panier existe déjà, modifie la quantité existante au lieu de créer un nouvel array 
+
 
 
 const selectedColor = document.getElementById("colors");
 const cartButton = document.getElementById("addToCart");
 const selectedQuantity = document.getElementById("quantity");
 
-// let cart = [];
-// Crée un array dans le panier contenant la couleur du produit, son ID et sa quantité. Si un array ayant l'ID et la couleur du produit à ajouter au panier existe déjà, modifie la quantité existante au lieu de créer un nouvel array 
 
-// const testCart = function () {
-//   const addToCart = {
+const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+// let newQuantity = parseInt(cart[i].quantity + parseInt(selectedQuantity.value)
+
+
+// const updatedQuantity = function(quantityStored, quantityOnPage) {
+// let newQuantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
+// console.log(newQuantity)
+// }
+
+
+// const addToCart = function () {
+//   let newProductInCart = {
 //     color: selectedColor.value,
-//     id: pageProductParam,
-//     quantity: selectedQuantity.value}
-//   console.log(cart)
-//   if (selectedQuantity.value == 0 || selectedColor.value == "") {
-//     console.log("Pas de couleur sélectionnée")
+//     id: productId,
+//     quantity: selectedQuantity.value
 //   }
-//   else if (cart.length != 0 && (cart.includes(selectedColor.value, pageProductParam)))  {
-//       let newQuantity = parseInt(cart + selectedQuantity)
-//       return cart.pop(newQuantity)
+//   if (cart.length === 0) {
+//     cart.push(newProductInCart);
+//     return localStorage.setItem("cart", JSON.stringify(cart));
+
 //   } else {
-//     return cart.push(addToCart);
+//     const productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
+//       if (productInCart) {
+//         console.log("Produit bien détecté dans le panier")
+//         productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
+//         localStorage.setItem("cart", JSON.stringify(cart));
+//       }
+
+//       else {
+//         cart.push(newProductInCart);
+//         // return localStorage.setItem("cart", JSON.stringify(cart));
+//       }
+
+//     };
 //   }
-//     console.log(cart.includes(selectedColor.value, pageProductParam, selectedQuantity.value))
-// }
 
-function newQuantity () {
-  localStorage.setItem(((localStorage.getItem(`${selectedColor.value}-${pageProductParam}`))) =+ 5)
-}
-
-const testCart = function () {
-  if (selectedQuantity.value == 0 || selectedColor.value == "") {
-    console.log("Pas de couleur sélectionnée")
+const addToCart = function () {
+  let newProductInCart = {
+    color: selectedColor.value,
+    id: productId,
+    quantity: selectedQuantity.value
   }
-  else if ((localStorage.getItem(`${selectedColor.value}-${pageProductParam}`)) > 0){
-    console.log("Produit déjà dans le panier")
-    return localStorage.setItem(`${selectedColor.value}-${pageProductParam}`, selectedQuantity.value);
-  } 
-  // else {
-  //   return localStorage.setItem(`${selectedColor.value}-${pageProductParam}`, selectedQuantity.value);
-  // }
-    // console.log(cart.includes(selectedColor.value, pageProductParam, selectedQuantity.value))
-}
+  const productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
+  if (productInCart) {
+    console.log("Produit bien détecté dans le panier")
+    productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
+    localStorage.setItem("cart", JSON.stringify(cart));
+  } else {
+    cart.push(newProductInCart);
+    return localStorage.setItem("cart", JSON.stringify(cart));
+  }
+};
 
 
-// const displayColor = function () {
-//   console.log(cart)
-//   let i = 0;
-//   for (const productArray in cart) {
-//     console.log(cart[i].includes(selectedColor.value, pageProductParam))
-//     i++
-//   }
+
+// const checkLocalStorage = function () {
+//   console.log(localStorage)
+//   console.log(localStorage.getItem(cart))
+// console.log((localStorage.getItem(`${selectedColor.value}-${productId}`)) > 0)
+// console.log((localStorage.getItem(`${selectedColor.value}-${productId}`)))
 // }
 
-const displayColor = function () {
-  console.log(localStorage)
-  console.log((localStorage.getItem(`${selectedColor.value}-${pageProductParam}`)) > 0)
-  // let i = 0;
-  // for (const productArray in cart) {
-  //   console.log(cart[i].includes(selectedColor.value, pageProductParam))
-  //   i++
-  // }
-}
 
-// class productInCart {
-//   constructor(color, id, quantity) {
-//     this.color = color;
-//     this.id = id;
-//     this.quantity = quantity;
-//   }
-//   currentCart() {
-//     console.log(`Produits actuellement dans le panier : ${this.id} en couleur ${this.color} et en quantité ${this.quantity}`)
-//   }
-// }
 
-// const addProductToCart =  new productInCart(selectedColor.value, pageProductParam, selectedQuantity.value);
-  // console.log(`Produits actuellement dans le panier : ${productInCart.id} en couleur ${productInCart.color} et en quantité ${productInCart.quantity}`)
 
-// const checkCart = function () {
-//   console.log(`Produits actuellement dans le panier : ${this.id} en couleur ${this.color} et en quantité ${this.quantity}`)
-// }
-
-// cartButton.addEventListener("click", addProductToCart)
-cartButton.addEventListener("click", testCart)
-selectedColor.addEventListener("change", displayColor)
-// selectedColor.addEventListener("change", checkCart)
+// cartButton.addEventListener("click", retrieveCart)
+cartButton.addEventListener("click", addToCart)
+// selectedColor.addEventListener("change", checkLocalStorage)
