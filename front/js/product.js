@@ -50,7 +50,7 @@ const addToCart = function () {
   let newProductInCart = {
     color: selectedColor.value,
     id: productId,
-    quantity: selectedQuantity.value
+    quantity: new Number(selectedQuantity.value)
   }
   const productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
   if (productInCart) {

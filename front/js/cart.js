@@ -8,20 +8,20 @@ function createTag(newTagName) {
 
 const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-let cartItemImage;
-let cartItemImageAlt;
-let productName;
-let productColor;
-let productPrice;
 
 
 // Récupère les données de l'API, puis 1/ compare l'ID du panier en localstorage avec l'id des produits de l'API 2/ retourne les propriétés des produits trouvés dans l'API et le localstorage dans le innerHTML
 function displayCart() {
   fetch("http://localhost:3000/api/products")
-    .then((response) => {
-      return response.json()
+  .then((response) => {
+    return response.json()
     })
     .then((APIProductList) => {
+      let cartItemImage;
+      let cartItemImageAlt;
+      let productName;
+      let productColor;
+      let productPrice;
       cart.forEach(productInCart => {
         const matchingProduct = APIProductList.find(product => product._id == productInCart.id)
         APIProductList.forEach(productInList => {
@@ -39,3 +39,4 @@ function displayCart() {
 }
 
 displayCart()
+
