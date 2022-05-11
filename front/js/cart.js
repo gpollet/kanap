@@ -64,13 +64,18 @@ let quantityInputField
 const eventListener = function () {
   quantityInputField = document.querySelectorAll(".cart__item__content__settings__quantity > .itemQuantity")
   quantityInputField.forEach(element => {
+    element.setAttribute('value', element.value)
     productQuantity += element.value
-    element.addEventListener("change", getCartTotal)
+    element.addEventListener("change", pushLocalStorageQuantity)
   });
   removeButton = document.querySelectorAll(".deleteItem")
   removeButton.forEach(element => {
     element.addEventListener("click", removeFromCart)
   })
+}
+
+const getUnitQuantities = function() {
+  quantityInputField.setAttribute('value', element.value)
 }
 
 // Quand la quantité dans les <input> change, calcule le total depuis les quantités affichées et le prix des produits récupérés depuis l'API dans la fonction displayCart
@@ -85,9 +90,10 @@ const getCartTotal = function () {
   }
   totalQuantityElement.textContent = cartTotalQuantity
   displayedTotal.textContent = cartTotalPrice
+  eventListener()
 }
 
-
+// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage pour trouver son index dans cart et le supprimer, puis le supprime du DOM et force un recalcul du total
 const removeFromCart = function () {
   const getParentArticle = this.closest("article")
   let parentArticleDataset = {
@@ -105,6 +111,18 @@ const removeFromCart = function () {
   }
 }
 
-const testFunction = function() {
-  console.log("test")
+const pushLocalStorageQuantity = function () {
+  const getParentArticle = this.closest("article")
+  let parentArticleDataset = {
+    color: getParentArticle.dataset.color,
+    id: getParentArticle.dataset.id
+  }
+  const updatedProduct = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  if (updatedProduct) {
+    const indexOfUpdatedProduct = cart.indexOf(updatedProduct)
+    updatedProduct.quantity = parseInt(quantityInputField[indexOfUpdatedProduct].value)
+    localStorage.setItem("cart", JSON.stringify(cart));
+    eventListener()
+    getCartTotal()
+  }
 }
