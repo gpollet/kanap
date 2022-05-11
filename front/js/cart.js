@@ -60,7 +60,7 @@ const displayedTotal = document.getElementById("totalPrice")
 let removeButton
 let quantityInputField
 
-// Ajoute un event listener sur les <input> quantité de chaque produit et leur bouton "Supprimer"; active la fonction getCartTotal si la valeur d'un input change, ou la fonction removeFromCart si un clic sur "Supprimer"
+// Ajoute un event listener sur les <input> quantité de chaque produit et leur bouton "Supprimer"; active la fonction getCartTotal si la valeur d'un input change, ou la fonction removeFromCart si un clic sur "Supprimer"; ajuste les quantités individuelles de chaque produit sur la page
 const eventListener = function () {
   quantityInputField = document.querySelectorAll(".cart__item__content__settings__quantity > .itemQuantity")
   quantityInputField.forEach(element => {
@@ -111,6 +111,7 @@ const removeFromCart = function () {
   }
 }
 
+// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage pour trouver son index dans cart et mettre à jour sa quantité, puis force un recalcul du total
 const pushLocalStorageQuantity = function () {
   const getParentArticle = this.closest("article")
   let parentArticleDataset = {
