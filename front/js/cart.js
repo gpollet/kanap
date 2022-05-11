@@ -1,7 +1,7 @@
 'use strict';
 
 const cartSection = document.getElementById("cart__items");
-let initialTotalPrice = new Number()
+
 // Crée un nouvel élément html de type (newTagName)
 function createTag(newTagName) {
   return document.createElement(newTagName);
@@ -9,13 +9,12 @@ function createTag(newTagName) {
 
 const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
 let cartItemImage;
 let cartItemImageAlt;
 let productName;
 let productColor;
 let productPrice;
-let displayQuantity = []
+let productQuantity = []
 let displayPrice = []
 let cartContent = '';
 let i = 0;
@@ -45,7 +44,6 @@ function displayCart() {
       cartSection.innerHTML += cartContent;
       eventListener()
       getCartTotal()
-      testEnvironment()
     })
 }
 
@@ -60,13 +58,13 @@ displayCart()
 const totalQuantityElement = document.getElementById("totalQuantity")
 const displayedTotal = document.getElementById("totalPrice")
 let removeButton
-let displayedQuantity
+let quantityInputsValue
 
 // Surveille la valeur des éléments <input> de la quantité de chaque produit, et active la fonction getCartTotal si un changement est détecté ; ajout une détection de clic sur les boutons "Supprimer", pour activer la fonction adaptée en réponse
 const eventListener = function () {
-  displayedQuantity = document.querySelectorAll(".cart__item__content__settings__quantity > .itemQuantity")
-  displayedQuantity.forEach(element => {
-    displayQuantity += element.value
+  quantityInputsValue = document.querySelectorAll(".cart__item__content__settings__quantity > .itemQuantity")
+  quantityInputsValue.forEach(element => {
+    productQuantity += element.value
     element.addEventListener("change", getCartTotal)
   });
   removeButton = document.querySelectorAll(".deleteItem")
@@ -80,44 +78,28 @@ const getCartTotal = function () {
   let cartTotalPrice = new Number()
   let cartTotalQuantity = new Number();
   let i = 0
-  while (i !== displayedQuantity.length) {
-    cartTotalQuantity += Number(displayedQuantity[i].value)
-    cartTotalPrice += displayPrice[i] * displayedQuantity[i].value
+  while (i !== quantityInputsValue.length) {
+    cartTotalQuantity += Number(quantityInputsValue[i].value)
+    cartTotalPrice += displayPrice[i] * quantityInputsValue[i].value
     i++
   }
   totalQuantityElement.textContent = cartTotalQuantity
   displayedTotal.textContent = cartTotalPrice
 }
 
-// const updateLocalCart = function () {
-//   const displayedColor = document.querySelectorAll('.cart__item__content__description > p:nth-child(2)')
-//   const productInCart = cart.find(product => product.color == displayedColor.textContent && product.id == productId)
-//   if (productInCart) {
-//     productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
-//     localStorage.setItem("cart", JSON.stringify(cart));
-//   } else {
-//     cart.push(newProductInCart);
-//     return localStorage.setItem("cart", JSON.stringify(cart));
-//   }
-// };
-
-// HTML inséré via javascript donc inaccessible en dehors de la fonction displayCart
-const testEnvironment = function () {
-  // const displayedColor = document.querySelectorAll('.cart__item__content__description > p:nth-child(2)')
-  // console.log(displayedColor[0].textContent)
-  // const displayedColor = document.querySelectorAll('.cart__item__content__description > p:nth-child(2)')
-  // const productInCart = cart.find(product => product[0].id )
-  console.log(cart[0])
-  console.log(displayedQuantity[0])
-  console.log(removeButton[1])
-}
 
 const removeFromCart = function () {
-  // console.log((this.index()))
-  let getParentArticle
-  getParentArticle = this.closest("article")
-  console.log(getParentArticle)
-  console.log(productColor)
-  // cartSection.indexOf(getParentArticle)
-  // let removeProduct = cart.splice([i],0)
+  const getParentArticle = this.closest("article")
+  let parentArticleDataset = {
+    color: getParentArticle.dataset.color,
+    id: getParentArticle.dataset.id
+  }
+  const productToRemove = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  if (productToRemove) {
+    const indexOfRemovedProduct = cart.indexOf(productToRemove)
+    const removeProduct = cart.splice(indexOfRemovedProduct,1)
+    getParentArticle.remove()
+    localStorage.setItem("cart", JSON.stringify(cart));
+    getCartTotal()
+  }
 }
