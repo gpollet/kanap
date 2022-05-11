@@ -58,12 +58,12 @@ displayCart()
 const totalQuantityElement = document.getElementById("totalQuantity")
 const displayedTotal = document.getElementById("totalPrice")
 let removeButton
-let quantityInputsValue
+let quantityInputField
 
-// Surveille la valeur des éléments <input> de la quantité de chaque produit, et active la fonction getCartTotal si un changement est détecté ; ajout une détection de clic sur les boutons "Supprimer", pour activer la fonction adaptée en réponse
+// Ajoute un event listener sur les <input> quantité de chaque produit et leur bouton "Supprimer"; active la fonction getCartTotal si la valeur d'un input change, ou la fonction removeFromCart si un clic sur "Supprimer"
 const eventListener = function () {
-  quantityInputsValue = document.querySelectorAll(".cart__item__content__settings__quantity > .itemQuantity")
-  quantityInputsValue.forEach(element => {
+  quantityInputField = document.querySelectorAll(".cart__item__content__settings__quantity > .itemQuantity")
+  quantityInputField.forEach(element => {
     productQuantity += element.value
     element.addEventListener("change", getCartTotal)
   });
@@ -78,9 +78,9 @@ const getCartTotal = function () {
   let cartTotalPrice = new Number()
   let cartTotalQuantity = new Number();
   let i = 0
-  while (i !== quantityInputsValue.length) {
-    cartTotalQuantity += Number(quantityInputsValue[i].value)
-    cartTotalPrice += displayPrice[i] * quantityInputsValue[i].value
+  while (i !== quantityInputField.length) {
+    cartTotalQuantity += Number(quantityInputField[i].value)
+    cartTotalPrice += displayPrice[i] * quantityInputField[i].value
     i++
   }
   totalQuantityElement.textContent = cartTotalQuantity
@@ -100,6 +100,11 @@ const removeFromCart = function () {
     const removeProduct = cart.splice(indexOfRemovedProduct,1)
     getParentArticle.remove()
     localStorage.setItem("cart", JSON.stringify(cart));
+    eventListener()
     getCartTotal()
   }
+}
+
+const testFunction = function() {
+  console.log("test")
 }
