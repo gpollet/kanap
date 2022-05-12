@@ -4,10 +4,12 @@ const currentPageUrl = window.location.href;
 const url = new URL(currentPageUrl);
 const productId = url.searchParams.get("id");
 
+// Crée un nouvel élément html de type (newTagName)
 function createTag(newTagName) {
   return document.createElement(newTagName);
 }
 
+// Récupère les données de l'API, puis ajoute les éléments html correspondants
 function fillProductsPages() {
   fetch("http://localhost:3000/api/products")
     .then((response) => {
@@ -45,18 +47,29 @@ const selectedColor = document.getElementById("colors");
 const cartButton = document.getElementById("addToCart");
 const selectedQuantity = document.getElementById("quantity");
 const cart = JSON.parse(localStorage.getItem("cart")) || [];
+let productInCart
 
+// Vérifie si un produit avec cet id est déjà présent dans le panier en localstorage. Si oui, enregistre son index puis vérifie si c'est la même couleur. Si même couleur, ajuste la quantité, sinon ajoute le nouveau produit avant celui ayant le même id pour regrouper par modèle dans le panier.
+// Si aucun produit avec cet id n'existe déjà, crée un nouveau produit dans le localstorage.
 const addToCart = function () {
   let newProductInCart = {
     color: selectedColor.value,
     id: productId,
     quantity: new Number(selectedQuantity.value)
   }
-  const productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
+  productInCart = cart.find(product => product.id == productId)
+  const findProductIndex = cart.indexOf(productInCart)
+  console.log(findProductIndex)
   if (productInCart) {
-    console.log("Produit bien détecté dans le panier")
-    productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
-    localStorage.setItem("cart", JSON.stringify(cart));
+    productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
+    if (productInCart) {
+      productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    else {
+      cart.splice(findProductIndex, 0, newProductInCart)
+      return localStorage.setItem("cart", JSON.stringify(cart));
+    }
   } else {
     cart.push(newProductInCart);
     return localStorage.setItem("cart", JSON.stringify(cart));
