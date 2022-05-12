@@ -44,6 +44,7 @@ function displayCart() {
       cartSection.innerHTML += cartContent;
       eventListener()
       getCartTotal()
+      formInputValidation()
     })
 }
 
@@ -59,6 +60,8 @@ const totalQuantityElement = document.getElementById("totalQuantity")
 const displayedTotal = document.getElementById("totalPrice")
 let removeButton
 let quantityInputField
+let getParentArticle
+let updatedProduct
 
 // Ajoute un event listener sur les <input> quantité de chaque produit et leur bouton "Supprimer"; active la fonction getCartTotal si la valeur d'un input change, ou la fonction removeFromCart si un clic sur "Supprimer"; ajuste les quantités individuelles de chaque produit sur la page
 const eventListener = function () {
@@ -74,7 +77,7 @@ const eventListener = function () {
   })
 }
 
-const getUnitQuantities = function() {
+const getUnitQuantities = function () {
   quantityInputField.setAttribute('value', element.value)
 }
 
@@ -93,17 +96,23 @@ const getCartTotal = function () {
   eventListener()
 }
 
-// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage pour trouver son index dans cart et le supprimer, puis le supprime du DOM et force un recalcul du total
-const removeFromCart = function () {
-  const getParentArticle = this.closest("article")
+// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage, pour renvoyer au caller (fonction pour supprimer un produit du panier, ou pour mettre à jour la quantité) le produit concerné
+const getProductToUpdate = function () {
   let parentArticleDataset = {
     color: getParentArticle.dataset.color,
     id: getParentArticle.dataset.id
   }
-  const productToRemove = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  updatedProduct = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  return updatedProduct;
+}
+
+// Trouve l'index du produit dans cart pour le supprimer, le retirer du DOM et forcer un recalcul du total
+const removeFromCart = function () {
+  getParentArticle = this.closest("article")
+  getProductToUpdate()
   if (productToRemove) {
     const indexOfRemovedProduct = cart.indexOf(productToRemove)
-    const removeProduct = cart.splice(indexOfRemovedProduct,1)
+    const removeProduct = cart.splice(indexOfRemovedProduct, 1)
     getParentArticle.remove()
     localStorage.setItem("cart", JSON.stringify(cart));
     eventListener()
@@ -111,19 +120,78 @@ const removeFromCart = function () {
   }
 }
 
-// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage pour trouver son index dans cart et mettre à jour sa quantité, puis force un recalcul du total
+// Trouve l'index du produit dans cart pour mettre à jour sa quantité, puis force un recalcul du total
 const pushLocalStorageQuantity = function () {
-  const getParentArticle = this.closest("article")
-  let parentArticleDataset = {
-    color: getParentArticle.dataset.color,
-    id: getParentArticle.dataset.id
-  }
-  const updatedProduct = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  getParentArticle = this.closest("article")
+  getProductToUpdate()
   if (updatedProduct) {
     const indexOfUpdatedProduct = cart.indexOf(updatedProduct)
     updatedProduct.quantity = parseInt(quantityInputField[indexOfUpdatedProduct].value)
     localStorage.setItem("cart", JSON.stringify(cart));
     eventListener()
     getCartTotal()
+  }
+}
+
+const formInputs = document.querySelectorAll(".cart__order__form__question > input")
+const formInputsErrors = document.querySelectorAll(".cart__order__form__question > p")
+
+
+// Ajoute un eventListener à chaque élément champs du formulaire
+const formInputValidation = function () {
+  formInputs.forEach(inputField => {
+    inputField.addEventListener("change", checkInput)
+  });
+  document.getElementById('order').addEventListener("click", checkout)
+};
+
+
+const nameCriterias = /^[a-z ,.'-]+$/i
+const emailCriterias = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
+let validationStatus = false
+let errorName
+
+// Détecte le champs qui a été modifié, vérifie s'il répond aux critères de saisie définis, et si false modifie la balise html d'erreur correspondante. Si la saisie est à nouveau valide après modification, retire le message d'erreur.
+const checkInput = function (targetElement) {
+  let i = 0
+  while (i < 5) {
+    if (this.id == `${formInputs.item(i).name}`) {
+      if (this.id == 'firstName' || this.id == 'lastName' || this.id == 'city') {
+        validationStatus = nameCriterias.test(this.value)
+      } else if (this.id == 'email') {
+        validationStatus = emailCriterias.test(this.value)
+      } else {
+        validationStatus = true
+      }
+      errorName = document.getElementById(`${formInputsErrors.item(i).id}`)
+      if (validationStatus == false) {
+        errorName.textContent = "Vérifiez votre saisie"
+      } else {
+        errorName.textContent = ""
+      }
+      break
+    }
+    i++
+  }
+}
+
+let savedInputForm = {
+  firstName: "",
+  lastName: "",
+  address: "",
+  city: "",
+  email: "",
+  products: []
+}
+
+// Sauvegarde le contenu des champs du formulaire et le contenu du panier dans une variable savedInputForm
+const checkout = function () {
+  savedInputForm = {
+    firstName: `${formInputs[0].value}`,
+    lastName: `${formInputs[1].value}`,
+    address: `${formInputs[2].value}`,
+    city: `${formInputs[3].value}`,
+    email: `${formInputs[4].value}`,
+    products: cart
   }
 }
