@@ -44,6 +44,7 @@ function displayCart() {
       cartSection.innerHTML += cartContent;
       eventListener()
       getCartTotal()
+      formInputValidation()
     })
 }
 
@@ -131,3 +132,40 @@ const pushLocalStorageQuantity = function () {
     getCartTotal()
   }
 }
+
+const checkName = function () {
+  console.log("Test1")
+}
+
+const checkAddress = function () {
+  console.log("Test2")
+}
+
+const checkCity = function () {
+  console.log("Test3")
+}
+
+const checkEmail = function () {
+  console.log("Test4")
+}
+
+const passOrder = function () {
+  console.log("Test5")
+}
+
+let formInputs = [firstName, lastName, address, city, email, order]
+let formEvents = [checkName, checkName, checkAddress, checkCity, checkEmail, passOrder]
+
+// Ajoute un eventListener à chaque élément du formulaire
+const formInputValidation = function () {
+  let i = 0
+  while (i !== 6) {
+    document.getElementById(formInputs[i])
+    if (formInputs[i] == order) {
+      formInputs[i].addEventListener("click", formEvents[i])
+    } else {
+      formInputs[i].addEventListener("change", formEvents[i])
+    }
+    i++
+  }
+};
