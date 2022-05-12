@@ -181,7 +181,6 @@ let savedInputForm = {
   address: "",
   city: "",
   email: "",
-  products: []
 }
 
 // Sauvegarde le contenu des champs du formulaire et le contenu du panier dans une variable savedInputForm
@@ -192,6 +191,5 @@ const checkout = function () {
     address: `${formInputs[2].value}`,
     city: `${formInputs[3].value}`,
     email: `${formInputs[4].value}`,
-    products: cart
   }
 }
