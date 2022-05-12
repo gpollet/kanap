@@ -59,6 +59,8 @@ const totalQuantityElement = document.getElementById("totalQuantity")
 const displayedTotal = document.getElementById("totalPrice")
 let removeButton
 let quantityInputField
+let getParentArticle
+let updatedProduct
 
 // Ajoute un event listener sur les <input> quantité de chaque produit et leur bouton "Supprimer"; active la fonction getCartTotal si la valeur d'un input change, ou la fonction removeFromCart si un clic sur "Supprimer"; ajuste les quantités individuelles de chaque produit sur la page
 const eventListener = function () {
@@ -74,7 +76,7 @@ const eventListener = function () {
   })
 }
 
-const getUnitQuantities = function() {
+const getUnitQuantities = function () {
   quantityInputField.setAttribute('value', element.value)
 }
 
@@ -93,17 +95,23 @@ const getCartTotal = function () {
   eventListener()
 }
 
-// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage pour trouver son index dans cart et le supprimer, puis le supprime du DOM et force un recalcul du total
-const removeFromCart = function () {
-  const getParentArticle = this.closest("article")
+// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage, pour renvoyer au caller (fonction pour supprimer un produit du panier, ou pour mettre à jour la quantité) le produit concerné
+const getProductToUpdate = function () {
   let parentArticleDataset = {
     color: getParentArticle.dataset.color,
     id: getParentArticle.dataset.id
   }
-  const productToRemove = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  updatedProduct = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  return updatedProduct;
+}
+
+// Trouve l'index du produit dans cart pour le supprimer, le retirer du DOM et forcer un recalcul du total
+const removeFromCart = function () {
+  getParentArticle = this.closest("article")
+  getProductToUpdate()
   if (productToRemove) {
     const indexOfRemovedProduct = cart.indexOf(productToRemove)
-    const removeProduct = cart.splice(indexOfRemovedProduct,1)
+    const removeProduct = cart.splice(indexOfRemovedProduct, 1)
     getParentArticle.remove()
     localStorage.setItem("cart", JSON.stringify(cart));
     eventListener()
@@ -111,14 +119,10 @@ const removeFromCart = function () {
   }
 }
 
-// Compare l'id et la couleur de l'élément 'article' avec ceux contenus dans le panier en localstorage pour trouver son index dans cart et mettre à jour sa quantité, puis force un recalcul du total
+// Trouve l'index du produit dans cart pour mettre à jour sa quantité, puis force un recalcul du total
 const pushLocalStorageQuantity = function () {
-  const getParentArticle = this.closest("article")
-  let parentArticleDataset = {
-    color: getParentArticle.dataset.color,
-    id: getParentArticle.dataset.id
-  }
-  const updatedProduct = cart.find(product => product.color == parentArticleDataset.color && product.id == parentArticleDataset.id)
+  getParentArticle = this.closest("article")
+  getProductToUpdate()
   if (updatedProduct) {
     const indexOfUpdatedProduct = cart.indexOf(updatedProduct)
     updatedProduct.quantity = parseInt(quantityInputField[indexOfUpdatedProduct].value)
