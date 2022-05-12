@@ -133,39 +133,65 @@ const pushLocalStorageQuantity = function () {
   }
 }
 
-const checkName = function () {
-  console.log("Test1")
-}
+const formInputs = document.querySelectorAll(".cart__order__form__question > input")
+const formInputsErrors = document.querySelectorAll(".cart__order__form__question > p")
 
-const checkAddress = function () {
-  console.log("Test2")
-}
 
-const checkCity = function () {
-  console.log("Test3")
-}
-
-const checkEmail = function () {
-  console.log("Test4")
-}
-
-const passOrder = function () {
-  console.log("Test5")
-}
-
-let formInputs = [firstName, lastName, address, city, email, order]
-let formEvents = [checkName, checkName, checkAddress, checkCity, checkEmail, passOrder]
-
-// Ajoute un eventListener à chaque élément du formulaire
+// Ajoute un eventListener à chaque élément champs du formulaire
 const formInputValidation = function () {
+  formInputs.forEach(inputField => {
+    inputField.addEventListener("change", checkInput)
+  });
+  document.getElementById('order').addEventListener("click", checkout)
+};
+
+
+const nameCriterias = /^[a-z ,.'-]+$/i
+const emailCriterias = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
+let validationStatus = false
+let errorName
+
+// Détecte le champs qui a été modifié, vérifie s'il répond aux critères de saisie définis, et si false modifie la balise html d'erreur correspondante. Si la saisie est à nouveau valide après modification, retire le message d'erreur.
+const checkInput = function (targetElement) {
   let i = 0
-  while (i !== 6) {
-    document.getElementById(formInputs[i])
-    if (formInputs[i] == order) {
-      formInputs[i].addEventListener("click", formEvents[i])
-    } else {
-      formInputs[i].addEventListener("change", formEvents[i])
+  while (i < 5) {
+    if (this.id == `${formInputs.item(i).name}`) {
+      if (this.id == 'firstName' || this.id == 'lastName' || this.id == 'city') {
+        validationStatus = nameCriterias.test(this.value)
+      } else if (this.id == 'email') {
+        validationStatus = emailCriterias.test(this.value)
+      } else {
+        validationStatus = true
+      }
+      errorName = document.getElementById(`${formInputsErrors.item(i).id}`)
+      if (validationStatus == false) {
+        errorName.textContent = "Vérifiez votre saisie"
+      } else {
+        errorName.textContent = ""
+      }
+      break
     }
     i++
   }
-};
+}
+
+let savedInputForm = {
+  firstName: "",
+  lastName: "",
+  address: "",
+  city: "",
+  email: "",
+  products: []
+}
+
+// Sauvegarde le contenu des champs du formulaire et le contenu du panier dans une variable savedInputForm
+const checkout = function () {
+  savedInputForm = {
+    firstName: `${formInputs[0].value}`,
+    lastName: `${formInputs[1].value}`,
+    address: `${formInputs[2].value}`,
+    city: `${formInputs[3].value}`,
+    email: `${formInputs[4].value}`,
+    products: cart
+  }
+}
