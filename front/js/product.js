@@ -45,6 +45,7 @@ const selectedColor = document.getElementById("colors");
 const cartButton = document.getElementById("addToCart");
 const selectedQuantity = document.getElementById("quantity");
 const cart = JSON.parse(localStorage.getItem("cart")) || [];
+let productInCart
 
 const addToCart = function () {
   let newProductInCart = {
@@ -52,11 +53,20 @@ const addToCart = function () {
     id: productId,
     quantity: new Number(selectedQuantity.value)
   }
-  const productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
+  productInCart = cart.find(product => product.id == productId)
+  const findProductIndex = cart.indexOf(productInCart)
+  console.log(findProductIndex)
   if (productInCart) {
-    console.log("Produit bien détecté dans le panier")
-    productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
-    localStorage.setItem("cart", JSON.stringify(cart));
+    productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
+    if (productInCart) {
+      productInCart.quantity = parseInt(productInCart.quantity) + parseInt(selectedQuantity.value)
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    else {
+      // cart.push(newProductInCart);
+      cart.splice(findProductIndex, 0, newProductInCart)
+      return localStorage.setItem("cart", JSON.stringify(cart));
+    }
   } else {
     cart.push(newProductInCart);
     return localStorage.setItem("cart", JSON.stringify(cart));
