@@ -215,7 +215,10 @@ const mergeInputs = function () {
   }
 }
 
-function sendCartAndInput() {
+let testResponse = []
+
+function sendCartAndInput(event) {
+  // event.preventDefault()
   mergeInputs()
   fetch("http://localhost:3000/api/products/order", {
       method: "POST",
@@ -225,8 +228,11 @@ function sendCartAndInput() {
       }
     })
     .then((response) => {
-      console.log(response)
-      return response.url
+      return response.json()
+    })
+    .then((response) => {
+      localStorage.clear();
+      window.location.href = `confirmation.html?order=${response.orderId}`
     })
     .catch((error) => {
       console.log(error)
