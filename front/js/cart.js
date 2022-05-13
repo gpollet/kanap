@@ -215,7 +215,8 @@ const mergeInputs = function () {
   }
 }
 
-function sendCartAndInput() {
+function sendCartAndInput(event) {
+  event.preventDefault()
   mergeInputs()
   fetch("http://localhost:3000/api/products/order", {
       method: "POST",
@@ -226,7 +227,7 @@ function sendCartAndInput() {
     })
     .then((response) => {
       console.log(response)
-      return response.url
+      return response.json
     })
     .catch((error) => {
       console.log(error)
