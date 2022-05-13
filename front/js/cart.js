@@ -130,11 +130,13 @@ const pushLocalStorageQuantity = function () {
     localStorage.setItem("cart", JSON.stringify(cart));
     eventListener()
     getCartTotal()
+    convertCartToArray()
   }
 }
 
 const formInputs = document.querySelectorAll(".cart__order__form__question > input")
 const formInputsErrors = document.querySelectorAll(".cart__order__form__question > p")
+const orderButton = document.getElementById('order')
 
 
 // Ajoute un eventListener à chaque élément champs du formulaire
@@ -142,7 +144,7 @@ const formInputValidation = function () {
   formInputs.forEach(inputField => {
     inputField.addEventListener("change", checkInput)
   });
-  document.getElementById('order').addEventListener("click", checkout)
+  orderButton.addEventListener("click", sendCartAndInput)
 };
 
 
@@ -175,21 +177,58 @@ const checkInput = function (targetElement) {
   }
 }
 
-let savedInputForm = {
-  firstName: "",
-  lastName: "",
-  address: "",
-  city: "",
-  email: "",
-}
+let contact
 
-// Sauvegarde le contenu des champs du formulaire et le contenu du panier dans une variable savedInputForm
-const checkout = function () {
-  savedInputForm = {
+// Sauvegarde le contenu des champs du formulaire dans une variable contact
+const saveInputForm = function () {
+  contact = {
     firstName: `${formInputs[0].value}`,
     lastName: `${formInputs[1].value}`,
     address: `${formInputs[2].value}`,
     city: `${formInputs[3].value}`,
     email: `${formInputs[4].value}`,
   }
+}
+
+const products = []
+
+// Extrait le contenu du panier en localstorage et le sauvegarde dans une variable products
+const convertCartToArray = function () {
+  cart.forEach(product => {
+    cart.find(product => product.id)
+    products.push(product.id)
+    /* Si besoin de supprimer les id doublons car couleur pas prise en compte par API, décommenter ci-dessous et y intégrer contenu de la fonction convertCartToArray
+    if (products.includes(product.id) == false) {
+    }
+    */
+  });
+}
+
+let orderProducts
+
+const mergeInputs = function () {
+  convertCartToArray()
+  saveInputForm()
+  orderProducts = {
+    contact,
+    products
+  }
+}
+
+function sendCartAndInput() {
+  mergeInputs()
+  fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      body: JSON.stringify(orderProducts),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    .then((response) => {
+      console.log(response)
+      return response.url
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
