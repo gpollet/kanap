@@ -60,7 +60,6 @@ const addToCart = function () {
     }
     productInCart = cart.find(product => product.id == productId)
     const findProductIndex = cart.indexOf(productInCart)
-    console.log(findProductIndex)
     if (productInCart) {
       productInCart = cart.find(product => product.color == selectedColor.value && product.id == productId)
       if (productInCart) {
@@ -76,7 +75,5 @@ const addToCart = function () {
     }
   }
 }
-
-
 
 cartButton.addEventListener("click", addToCart)

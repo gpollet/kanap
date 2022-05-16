@@ -155,7 +155,6 @@ let errorName
 
 // Détecte le champs qui a été modifié, vérifie s'il répond aux critères de saisie définis, et si false modifie la balise html d'erreur correspondante. Si la saisie est à nouveau valide après modification, retire le message d'erreur.
 const checkInput = function (targetElement) {
-  console.log(validationStatus)
   let i = 0
   while (i < 5) {
     if (this.id == `${formInputs.item(i).name}`) {
@@ -207,6 +206,7 @@ const convertCartToArray = function () {
 
 let orderProducts
 
+// Regroupe le contenu du panier et le contenu des champs du formulaire dans un unique object
 const mergeInputs = function () {
   convertCartToArray()
   saveInputForm()
@@ -216,8 +216,7 @@ const mergeInputs = function () {
   }
 }
 
-let testResponse = []
-
+// Vérifie que tous les champs du formulaire sont valides, et si oui : envoie le contenu du panier, redirige vers la page de confirmation correspondant à l'orderid, et vide le localstorage
 function sendCartAndInput(event) {
   event.preventDefault()
   if (!validationStatus.includes(false) && !validationStatus.includes(undefined)) {
