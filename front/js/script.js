@@ -8,7 +8,6 @@ function createTag(newTagName) {
 }
 
 // Fonction qui 1/ récupère le contenu de l'API et le converti en JSON 2/ crée une carte par object dans le JSON en créant les balises HTML puis 3/ leur assigne une classe et importe le contenu depuis le JSON (nom du produit, image, id...)
-
 function createProductsCards() {
   fetch("http://localhost:3000/api/products")
     .then((response) => {
