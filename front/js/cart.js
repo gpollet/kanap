@@ -162,8 +162,12 @@ const checkInput = function (targetElement) {
         validationStatus[i] = nameCriterias.test(this.value)
       } else if (this.id == 'email') {
         validationStatus[i] = emailCriterias.test(this.value)
-      } else {
-        validationStatus[i] = true
+      } else if (this.id == 'address') {
+        if (formInputs[i].value.length > 5) {
+          validationStatus[i] = true
+        } else {
+          validationStatus[i] = false
+        }
       }
       errorName = document.getElementById(`${formInputsErrors.item(i).id}`)
       if (validationStatus[i] == false) {
