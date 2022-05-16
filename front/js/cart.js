@@ -150,23 +150,24 @@ const formInputValidation = function () {
 
 const nameCriterias = /^[a-z ,.'-]+$/i
 const emailCriterias = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
-let validationStatus = false
+let validationStatus = [undefined, undefined, undefined,undefined,undefined]
 let errorName
 
 // Détecte le champs qui a été modifié, vérifie s'il répond aux critères de saisie définis, et si false modifie la balise html d'erreur correspondante. Si la saisie est à nouveau valide après modification, retire le message d'erreur.
 const checkInput = function (targetElement) {
+  console.log(validationStatus)
   let i = 0
   while (i < 5) {
     if (this.id == `${formInputs.item(i).name}`) {
       if (this.id == 'firstName' || this.id == 'lastName' || this.id == 'city') {
-        validationStatus = nameCriterias.test(this.value)
+        validationStatus[i] = nameCriterias.test(this.value)
       } else if (this.id == 'email') {
-        validationStatus = emailCriterias.test(this.value)
+        validationStatus[i] = emailCriterias.test(this.value)
       } else {
-        validationStatus = true
+        validationStatus[i] = true
       }
       errorName = document.getElementById(`${formInputsErrors.item(i).id}`)
-      if (validationStatus == false) {
+      if (validationStatus[i] == false) {
         errorName.textContent = "Vérifiez votre saisie"
       } else {
         errorName.textContent = ""
@@ -218,23 +219,25 @@ const mergeInputs = function () {
 let testResponse = []
 
 function sendCartAndInput(event) {
-  // event.preventDefault()
-  mergeInputs()
-  fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      body: JSON.stringify(orderProducts),
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
-    .then((response) => {
-      return response.json()
-    })
-    .then((response) => {
-      localStorage.clear();
-      window.location.href = `confirmation.html?order=${response.orderId}`
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+  event.preventDefault()
+  if (!validationStatus.includes(false) && !validationStatus.includes(undefined)) {
+    mergeInputs()
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(orderProducts),
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        localStorage.clear();
+        window.location.href = `confirmation.html?order=${response.orderId}`
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
 }
