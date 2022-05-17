@@ -148,8 +148,8 @@ const formInputValidation = function () {
 };
 
 
-const nameCriterias = /^[a-zç ,.'-]+$/i
-const emailCriterias = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
+const nameCriterias = /^[a-zç]+[a-zç ,.'-]+$/i
+const emailCriterias = /[a-z0-9!#%&'*+/=^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
 let validationStatus = [undefined, undefined, undefined,undefined,undefined]
 let errorName
 
