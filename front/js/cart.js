@@ -110,8 +110,8 @@ const getProductToUpdate = function () {
 const removeFromCart = function () {
   getParentArticle = this.closest("article")
   getProductToUpdate()
-  if (productToRemove) {
-    const indexOfRemovedProduct = cart.indexOf(productToRemove)
+  if (updatedProduct) {
+    const indexOfRemovedProduct = cart.indexOf(updatedProduct)
     const removeProduct = cart.splice(indexOfRemovedProduct, 1)
     getParentArticle.remove()
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -148,7 +148,7 @@ const formInputValidation = function () {
 };
 
 
-const nameCriterias = /^[a-z ,.'-]+$/i
+const nameCriterias = /^[a-zç ,.'-]+$/i
 const emailCriterias = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
 let validationStatus = [undefined, undefined, undefined,undefined,undefined]
 let errorName
@@ -242,5 +242,7 @@ function sendCartAndInput(event) {
       .catch((error) => {
         console.log(error)
       })
+  } else {
+    alert("Le formulaire n'a pas pu être validé. Tous les champs sont-ils correctement remplis?")
   }
 }
