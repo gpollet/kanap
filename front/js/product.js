@@ -52,7 +52,8 @@ let productInCart
 // Vérifie si un produit avec cet id est déjà présent dans le panier en localstorage. Si oui, enregistre son index puis vérifie si c'est la même couleur. Si même couleur, ajuste la quantité, sinon ajoute le nouveau produit avant celui ayant le même id pour regrouper par modèle dans le panier.
 // Si aucun produit avec cet id n'existe déjà, crée un nouveau produit dans le localstorage.
 const addToCart = function () {
-  if (selectedColor.value == "--SVP, choisissez une couleur --" || selectedQuantity.value == 0) {} else {
+  if (selectedColor.value == "" || selectedQuantity.value == 0) {
+  } else {
     let newProductInCart = {
       color: selectedColor.value,
       id: productId,
