@@ -55,6 +55,7 @@ let productInCart;
 // Si aucun produit avec cet id n'existe déjà, crée un nouveau produit dans le localstorage.
 const addToCart = function () {
   if (selectedColor.value == "" || selectedQuantity.value == 0) {
+    alert("Aucune couleur/quantité sélectionnée.");
   } else {
     let newProductInCart = {
       color: selectedColor.value,
